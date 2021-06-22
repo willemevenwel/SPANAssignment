@@ -99,8 +99,6 @@ Libs used:
     implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
 ```
 
-
-      
 ## Running Tests
 
 TODO
