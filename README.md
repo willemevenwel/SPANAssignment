@@ -85,6 +85,13 @@ in the points table.
 
 In order to get the statistics, I thought to use an in memory database. I then also decided to implement a connection pooling data access layer framework.
 Which can assist in executing various queries on the data.
+
+## How it Works?
+
+Once the Main.java file is run, a while loop executed (forever, please forgive this way), and then starts listening
+to the folder: dropfileshere. Once the sample.csv (can be retrieved from the samples directory) is copied into the dropfileshere
+folder, it will get processed. DONT use terracopy, just copy the file using commandline. The event is listening to file
+create event, and terracopy or similar holds onto the file, so file then cant be processed.
  
 ## Tech Stack
 
@@ -104,6 +111,8 @@ Libs used:
 TODO
 
 ## RoapMap
+
+Want to implement a properties file so that listening folders can be set.
 
 Want to implement a Thread pool, so that once a file comes in it gets added to the pool to get processed, instead of immediately processed.
 
