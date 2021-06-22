@@ -79,6 +79,10 @@ and it just didnt. I'm thinking its because its not REALLY compatible with JDK1.
 The next steps was designing my framework for the application. I decided on implementing a watcher on a directory, which will listen for files dropped.
 These will be the sample files (I call them match files, like football match) and process them.
 
+Match files get processed line by line. Each line is split into the score which each team achieved and their name. This then gets 
+inserted into the Match table. At this point the winner (or draw) gets determined. Scores then get allocated and processed for each team 
+in the points table.
+
 In order to get the statistics, I thought to use an in memory database. I then also decided to implement a connection pooling data access layer framework.
 Which can assist in executing various queries on the data.
  
