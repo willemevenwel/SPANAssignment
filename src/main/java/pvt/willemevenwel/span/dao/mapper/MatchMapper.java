@@ -1,7 +1,8 @@
-package pvt.willemevenwel.span;
+package pvt.willemevenwel.span.dao.mapper;
 
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
+import pvt.willemevenwel.span.dao.vo.MatchVO;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;

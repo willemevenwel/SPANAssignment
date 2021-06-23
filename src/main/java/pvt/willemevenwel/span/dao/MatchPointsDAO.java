@@ -1,13 +1,18 @@
-package pvt.willemevenwel.span;
+package pvt.willemevenwel.span.dao;
 
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.RegisterMapper;
+import pvt.willemevenwel.span.dao.mapper.MatchMapper;
+import pvt.willemevenwel.span.dao.mapper.PointsMapper;
+import pvt.willemevenwel.span.dao.mapper.PointsTotalMapper;
+import pvt.willemevenwel.span.dao.vo.MatchVO;
+import pvt.willemevenwel.span.dao.vo.PointsVO;
 
 import java.util.List;
 
-public interface MatchDAO {
+public interface MatchPointsDAO {
 
     @SqlUpdate("create table match (id int auto_increment primary key, league_name varchar(100), team_one_name varchar(100), team_one_score int, team_two_name varchar(100), team_two_score int, winning_team varchar(100)); ")
     void createMatchTable();

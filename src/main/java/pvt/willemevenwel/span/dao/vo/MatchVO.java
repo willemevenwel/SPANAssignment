@@ -1,4 +1,4 @@
-package pvt.willemevenwel.span;
+package pvt.willemevenwel.span.dao.vo;
 
 public class MatchVO {
 

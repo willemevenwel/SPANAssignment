@@ -1,4 +1,4 @@
-package pvt.willemevenwel.span;
+package pvt.willemevenwel.span.model;
 
 import java.util.Arrays;
 

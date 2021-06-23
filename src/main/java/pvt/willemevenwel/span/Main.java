@@ -3,7 +3,10 @@ package pvt.willemevenwel.span;
 import org.apache.log4j.PropertyConfigurator;
 import org.apache.log4j.Logger;
 import org.h2.jdbcx.JdbcConnectionPool;
-import org.skife.jdbi.v2.DBI;
+import pvt.willemevenwel.span.dao.vo.MatchVO;
+import pvt.willemevenwel.span.dao.vo.PointsVO;
+import pvt.willemevenwel.span.model.MatchPointsModel;
+import pvt.willemevenwel.span.model.MatchResult;
 
 import javax.sql.DataSource;
 import java.io.*;
@@ -13,24 +16,16 @@ public class Main extends DirectoryWatcher {
 
     static Logger logger = Logger.getLogger(Main.class);
 
-    private DataSource mDataSource;
-    private DBI mDBI;
-    private MatchDAO mMatchDAO;
+    private MatchPointsModel mModel;
 
-    public Main(DataSource pDataSource) {
+    public Main() {
 
         super();
 
-        logger.info("Configuring H2 DB with JDBI...");
-        setDataSource(pDataSource);
-        setDBI(new DBI(getDataSource()));
-        setMatchDAO(getDBI().open(MatchDAO.class));
+        DataSource ds = JdbcConnectionPool.create("jdbc:h2:mem:SPANAssignement", "username", "password");
 
-        logger.info("Creating schema and tables...");
-        getMatchDAO().createMatchTable();
-        getMatchDAO().createPointsTable();
+        setModel(new MatchPointsModel(ds));
 
-        logger.info("Done.");
     }
 
     public static void main(String[] args) {
@@ -39,9 +34,7 @@ public class Main extends DirectoryWatcher {
 
         logger.info("Starting SPANAssignment...");
 
-        DataSource ds = JdbcConnectionPool.create("jdbc:h2:mem:SPANAssignement", "username", "password");
-
-        DirectoryWatcher watcher = new Main(ds);
+        DirectoryWatcher watcher = new Main();
         watcher.startWatching("dropfileshere");
 
     }
@@ -72,7 +65,7 @@ public class Main extends DirectoryWatcher {
 
                 logger.info("Inserting into in mem db...");
 
-                getMatchDAO().insertMatch(
+                this.mModel.insertMatch(
                         pFileName,
                         matchResult.getTeamOne().getTeamName(),
                         matchResult.getTeamOne().getTeamScore(),
@@ -87,14 +80,14 @@ public class Main extends DirectoryWatcher {
 
                 if (matchResult.getWinningTeam().trim().equalsIgnoreCase("draw")) {
 
-                    getMatchDAO().insertPoints(
+                    this.mModel.insertPoints(
                             pFileName,
                             matchResult.getTeamOne().getTeamName(),
                             "Draw",
                             1
                     );
 
-                    getMatchDAO().insertPoints(
+                    this.mModel.insertPoints(
                             pFileName,
                             matchResult.getTeamTwo().getTeamName(),
                             "Draw",
@@ -103,14 +96,14 @@ public class Main extends DirectoryWatcher {
 
                 } else if (matchResult.getWinningTeam().equalsIgnoreCase(matchResult.getTeamOne().getTeamName())) {
 
-                    getMatchDAO().insertPoints(
+                    this.mModel.insertPoints(
                             pFileName,
                             matchResult.getTeamOne().getTeamName(),
                             "Win",
                             3
                     );
 
-                    getMatchDAO().insertPoints(
+                    this.mModel.insertPoints(
                             pFileName,
                             matchResult.getTeamTwo().getTeamName(),
                             "Loss",
@@ -120,14 +113,14 @@ public class Main extends DirectoryWatcher {
 
                 } else if (matchResult.getWinningTeam().equalsIgnoreCase(matchResult.getTeamTwo().getTeamName())) {
 
-                    getMatchDAO().insertPoints(
+                    this.mModel.insertPoints(
                             pFileName,
                             matchResult.getTeamOne().getTeamName(),
                             "Loss",
                             0
                     );
 
-                    getMatchDAO().insertPoints(
+                    this.mModel.insertPoints(
                             pFileName,
                             matchResult.getTeamTwo().getTeamName(),
                             "Win",
@@ -143,15 +136,7 @@ public class Main extends DirectoryWatcher {
             logger.info("Match file has been processed.");
 
 
-            //This code is just to verify that the match data was inserted into the db
-//            List<MatchVO> list = getMatchDAO().retrieveMatches();
-//
-//            for (MatchVO match : list) {
-//                logger.info("* " + match.getTeam_one_name() + " - " + match.getTeam_one_score());
-//                logger.info("* " + match.getTeam_two_name() + " - " + match.getTeam_two_score());
-//            }
-//
-            List<PointsVO> list = getMatchDAO().retrievePointsTable();
+            List<PointsVO> list = this.mModel.retrievePointsTable();
             int counter = 0;
             for (PointsVO pointsVO : list) {
                 logger.info(++counter + ". " + pointsVO.getTeam_name() + ", " + pointsVO.getPoints_allocated() + " pts");
@@ -195,27 +180,8 @@ public class Main extends DirectoryWatcher {
         logger.debug("Override - Entry was deleted from log dir (" + getPathToListen() + ") - File: " + pResult);
     }
 
-    public DataSource getDataSource() {
-        return mDataSource;
+    public void setModel(MatchPointsModel mModel) {
+        this.mModel = mModel;
     }
 
-    public void setDataSource(DataSource mDataSource) {
-        this.mDataSource = mDataSource;
-    }
-
-    public DBI getDBI() {
-        return mDBI;
-    }
-
-    public void setDBI(DBI mDBI) {
-        this.mDBI = mDBI;
-    }
-
-    public MatchDAO getMatchDAO() {
-        return mMatchDAO;
-    }
-
-    public void setMatchDAO(MatchDAO mMatchDAO) {
-        this.mMatchDAO = mMatchDAO;
-    }
 }
