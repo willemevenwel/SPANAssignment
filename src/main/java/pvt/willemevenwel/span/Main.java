@@ -22,9 +22,9 @@ public class Main extends DirectoryWatcher {
 
         super();
 
-        DataSource ds = JdbcConnectionPool.create("jdbc:h2:mem:SPANAssignement", "username", "password");
+        DataSource ds = DBUtil.getDB("SPANAssignement", "username", "password");
 
-        setModel(new MatchPointsModel(ds));
+        setModel(new MatchPointsModel(ds, false));
 
     }
 

@@ -108,7 +108,11 @@ Libs used:
 
 ## Running Tests
 
-TODO
+```
+    gradle test --tests Tester
+```
+
+Or if you are lazy like me, navigate to the Gradle window, expand Tasks > verification > double click test
 
 ## RoapMap
 

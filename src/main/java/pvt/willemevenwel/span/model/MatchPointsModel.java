@@ -17,7 +17,7 @@ public class MatchPointsModel {
     private DBI mDBI;
     private MatchPointsDAO mMatchPointsDAO;
 
-    public MatchPointsModel(DataSource pDataSource) {
+    public MatchPointsModel(DataSource pDataSource, boolean pSkipTablesCreation) {
 
         logger.info("Configuring H2 DB with JDBI...");
 
@@ -25,10 +25,14 @@ public class MatchPointsModel {
         setDBI(new DBI(getDataSource()));
         setMatchDAO(getDBI().open(MatchPointsDAO.class));
 
-        logger.info("Creating schema and tables...");
+        if (!pSkipTablesCreation) {
 
-        getMatchDAO().createMatchTable();
-        getMatchDAO().createPointsTable();
+            logger.info("Creating schema and tables...");
+
+            getMatchDAO().createMatchTable();
+            getMatchDAO().createPointsTable();
+
+        }
 
         logger.info("Done.");
 
@@ -62,8 +66,8 @@ public class MatchPointsModel {
         getMatchDAO().insertMatch(pFileName, teamName, teamScore, teamName1, teamScore1, winningTeam);
     }
 
-    public void insertPoints(String pFileName, String teamName, String draw, int i) {
-        getMatchDAO().insertPoints(pFileName, teamName, draw, i);
+    public void insertPoints(String pFileName, String pTeamName, String pResult, int pPointsAllocated) {
+        getMatchDAO().insertPoints(pFileName, pTeamName, pResult, pPointsAllocated);
     }
 
     public List<MatchVO> retrieveMatches() {
